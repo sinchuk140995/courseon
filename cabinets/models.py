@@ -21,10 +21,7 @@ class Cabinet(models.Model):
     content_object = GenericForeignKey("content_type", "object_id")
     timestamp = models.DateTimeField("subscribe date", auto_now_add=True)
     is_passed = models.NullBooleanField()
-    certificate = models.ImageField(upload_to=upload_certificate_location,
-                                    width_field="width_field",
-                                    height_field="height_field",
-                                    null=True)
+    certificate = models.URLField()
     height_field = models.IntegerField(default=0)
     width_field = models.IntegerField(default=0)
     is_subscribe = models.BooleanField(default=True)

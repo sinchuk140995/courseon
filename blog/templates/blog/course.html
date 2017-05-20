@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1>{{ course.name }}</h1>
-    <img class="img-responsive" src="{{ course.logotype.url }}" alt="{{ course.name }}" class="img-responsive profile"/><br/>
+    <img class="img-responsive" src="{{ course.logotype }}" alt="{{ course.name }}" class="img-responsive profile"/><br/>
     <hr/>
     <h4>URL-адреса: <span>
         <a href="{{ course.course_url }}">{{ course.course_url }}</a></span>

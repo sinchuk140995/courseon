@@ -9,22 +9,10 @@ from comments.models import Comment
 from cabinets.models import Cabinet
 
 
-def upload_location(instance, filename):
-    if hasattr(instance, 'category') or \
-            isinstance(getattr(type(instance), 'category', None), property):
-        return "%s/%s/%s" % (instance.category.slug, instance.slug, filename)
-    else:
-        return "%s/%s" % (instance.slug, filename)
-
-
 class Category(models.Model):
     name = models.CharField(max_length=30)
     slug = models.SlugField(unique=True)
-    logotype = models.ImageField(upload_to=upload_location,
-                                 width_field="width_field",
-                                 height_field="height_field")
-    height_field = models.IntegerField(default=0)
-    width_field = models.IntegerField(default=0)
+    logotype = models.URLField()
 
     def __str__(self):
         return self.name
@@ -35,16 +23,11 @@ class Category(models.Model):
 
 class Course(models.Model):
     name = models.CharField(max_length=30)
-    author = models.ForeignKey(User, default=1, null=True, on_delete=models.SET_NULL)
+    author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     slug = models.SlugField(unique=True)
     course_url = models.URLField("url", max_length=100)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    logotype = models.ImageField(upload_to=upload_location,
-                                 null=True,
-                                 width_field="width_field",
-                                 height_field="height_field")
-    height_field = models.IntegerField(default=0)
-    width_field = models.IntegerField(default=0)
+    logotype = models.URLField()
     describe = models.TextField()
     pub_date = models.DateField("date published", auto_now_add=True, auto_now=False)
     check_status = models.NullBooleanField(default=None)

@@ -28,7 +28,7 @@ class CourseForm(forms.ModelForm):
             "slug": "Транслітерація",
             "course_url": "URL",
             "category": "Категорія",
-            "logotype": "Логотип",
+            "logotype": "Посилання на логотип",
             "describe": "Опис",
         }
 
@@ -50,5 +50,5 @@ class CategoryForm(forms.ModelForm):
         ]
         labels = {
             "name": "Назва",
-            "logotype": "Логотип",
+            "logotype": "Посилання на логотип",
         }

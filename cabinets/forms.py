@@ -15,4 +15,4 @@ class UnsubscribeForm(CabinetForm):
 
 
 class CertificateUpload(CabinetForm):
-    certificate = forms.ImageField()
+    certificate = forms.URLField()

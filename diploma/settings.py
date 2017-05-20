@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'diploma.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'diploma_db',
+        'NAME': 'db_diploma',
         'USER' : 'postuser',
         'PASSWORD': 'postpass',
         'HOST' : '127.0.0.1',

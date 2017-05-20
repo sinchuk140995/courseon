@@ -5,16 +5,19 @@
         {% for cabinet in cabinet_list %}
             {% if cabinet.certificate %}
             <div class="shadow col-md-5">
-                <img src="{{ cabinet.certificate.url }}" alt="{{ cabinet.certificate.name }}" class="sc-item-image img-responsive">
+                <img src="{{ cabinet.certificate }}" alt="{{ cabinet.certificate.name }}" class="sc-item-image img-responsive center-block">
                 <div>
                     <h3><a href="{{ cabinet.content_object.get_absolute_url }}">{{ cabinet.content_object.name }}</a></h3>
                     <hr/>
                     <h4>Дата додавання: <span class="label label-info">{{ cabinet.timestamp }}</h4>
-                    <h4>Статус: </span>
+                    <h4>Статус:
                         {% if cabinet.is_passed %}
-                            <span class="label label-success">завершено</span>
+                            <span class="label label-success">завершено</span></h4>
+                            <h4><a download="{{ cabinet.content_object.name }}.jpg"
+                                  href="{{ cabinet.certificate }}" title="{{ cabinet.content_object.name }}">
+                                    Скачати<img style="display: none;" alt="{{ cabinet.content_object.name }}" src="{{ cabinet.certificate }}">
+                            </a></h4>
                         {% endif %}
-                    </h4>
                 </div>
             </div>
             {% endif %}
