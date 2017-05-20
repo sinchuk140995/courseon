@@ -1,0 +1,17 @@
+{% extends "blog/base_navbar.html" %}
+{% load urlify %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+        <div>
+            <h1>Відписка від курсу</h1>
+            <form method="POST" action=".">
+                {% csrf_token %}
+                <p>Підтвердіть відписку: {{ subscribed_course.name }}</p>
+                {{ unsubscribe_form|crispy }}
+                <input type="submit" value="Відписатися" class="btn btn-warning"/>
+                <a href="{{ subscribed_course.get_absolute_url }}" class="btn btn-default">Відмінити</a>
+            </form>
+        </div>
+        <hr/>
+{% endblock content %}

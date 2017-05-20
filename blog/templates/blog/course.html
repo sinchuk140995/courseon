@@ -1,0 +1,88 @@
+{% extends "blog/base_navbar.html" %}
+{% load urlify %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h1>{{ course.name }}</h1>
+    <img class="img-responsive" src="{{ course.logotype.url }}" alt="{{ course.name }}" class="img-responsive profile"/><br/>
+    <hr/>
+    <h4>URL-адреса: <span>
+        <a href="{{ course.course_url }}">{{ course.course_url }}</a></span>
+    </h4>
+    <hr/>
+    <h4>Категорія:<span class="label label-info">{{ course.category }}</span> </h4>
+    <h4>Дата додавання:<span class="label label-info">{{ course.pub_date }}</span> </h4>
+    {% if course.author.get_full_name %}
+        <h4>Автор:<span class="label label-info">{{ course.author.get_full_name }}</span> </h4>
+    {% endif %}
+    <hr/>
+    {% if request.user.is_authenticated %}
+        {% if not is_subscribed %}
+            <form method="POST" action="{% url "cabinets:index" %}">
+                {% csrf_token %}
+                {{ subscribe_form|crispy }}
+                    <input type="submit" value="Підписатися" class="btn btn-primary"/>
+            </form>
+        {% else %}
+            {% if not is_passed %}
+                <a href="{% url "cabinets:certificate_upload" course.slug %}" class="btn btn-info">Сертифікат</a>
+                <a href="{% url "cabinets:course_unsubscribe" course.slug %}" class="btn btn-warning">
+                    <span class="glyphicon glyphicon-trash"> Відписатися</span></a>
+            {% else %}
+                <a href="{% url "cabinets:certificates" %}" class="btn btn-info">Сертифікати</a>
+            {% endif %}
+        {% endif %}
+    {% else %}
+            <h4>Для додавання в кабінет необхідна авторизація.</h4>
+    {% endif %}
+    <hr/>
+    <div class="row">
+        <div class="col-sm-12">
+            <p class="content-markdown"> {{ course.describe }}</p>
+        </div>
+    </div>
+    <hr/>
+    <div>
+        <p class="lead">Коментарі</p>
+        {% if request.user.is_authenticated %}
+        <form method="POST" action=".">
+            {% csrf_token %}
+            {{ comment_form|crispy }}
+            <input type="submit" value="Відправити" class="btn btn-primary"/>
+        </form>
+        {% else %}
+            <h4>Для коментування необхідна авторизація.</h4>
+        {% endif %}
+        <hr/>
+        {% for comment in comments %}
+            <blockquote>
+                <p>{{ comment.text }}</p>
+                <footer>{{ comment.user }} on {{ comment.timestamp }} |
+                    {% if comment.children.count > 0 %}
+                        Відповідей: {{ comment.children.count }} |
+                    {% endif %}
+                    <a class="comment-reply-btn" href="#">Відповісти</a> |
+                    <a href="{{ comment.get_absolute_url }}">Вітка</a> |
+                </footer>
+
+                <div class="comment-reply">
+                    {% for child_comment in comment.children %}
+                        <blockquote>
+                            <p>{{ child_comment.text }}</p>
+                            <footer>{{ child_comment.user }} on {{ child_comment.timestamp }}</footer>
+                        </blockquote>
+                    {% endfor %}
+                    {% if request.user.is_authenticated %}
+                        <form method="POST" action=".">
+                            {% csrf_token %}
+                            {{ comment_form|crispy }}
+                            <input type="hidden" name="parent_id" value="{{ comment.id }}"/>
+                            <input type="submit" value="Відповісти" class="btn btn-default"/>
+                        </form>
+                    {% endif %}
+                </div>
+            </blockquote>
+            <hr/>
+        {% endfor %}
+    </div>
+{% endblock content %}

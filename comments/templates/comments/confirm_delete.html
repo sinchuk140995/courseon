@@ -1,0 +1,17 @@
+{% extends "blog/base.html" %}
+{% load urlify %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+        <div>
+            <h1>Видалення коментаря</h1>
+            <form method="POST" action=".">
+                {% csrf_token %}
+                <p>Підтвердіть видалення коментаря: {{ comment.text }}</p>
+                <input type="submit" value="Видалити" class="btn btn-warning"/>
+                <a href="{{ comment.get_absolute_url }}" class="btn btn-default">Відмінити</a>
+            </form>
+        </div>
+        <hr/>
+    </div>
+{% endblock content %}

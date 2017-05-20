@@ -1,0 +1,46 @@
+{% extends "blog/base_navbar.html" %}
+
+{% block content %}
+    {% if cabinet_list %}
+        {% for cabinet in cabinet_list %}
+            <div class="shadow col-md-5">
+                <img src="{{ cabinet.content_object.logotype.url }}" alt="{{ cabinet.content_object.name }}" class="sc-item-image img-responsive">
+                <div>
+                    <h3><a href="{{ cabinet.content_object.get_absolute_url }}">{{ cabinet.content_object.name }}</a></h3>
+                    <hr/>
+                    <h4>Дата додавання: <span class="label label-info">
+                        {{ cabinet.timestamp }}</span>
+                    </h4>
+                    <h4>Статус:
+                        {% if cabinet.is_passed %}
+                            <span class="label label-success">завершено</span>
+                        {% else %}
+                            <span class="label label-info">на проходженні</span>
+                        {% endif %}
+                    </h4>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="col-md-12">
+            <nav>
+                <ul class="pager">
+                    {% if cabinet_list.has_previous %}
+                        <li class="previous"><a href="?{{ page_request_var }}={{ cabinet_list.previous_page_number }}
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                <span aria-hidden="true">&larr;</span> Попередня</a>
+                        </li>
+                    {% endif %}
+                    {% if cabinet_list.has_next %}
+                        <li class="next"><a href="?{{ page_request_var }}={{ cabinet_list.next_page_number }}
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                            Наступна <span aria-hidden="true">&rarr;</span></a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% else %}
+        <h4 class="text-center">Немає доступних курсів.</h4>
+    {% endif %}
+{% endblock content %}

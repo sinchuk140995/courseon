@@ -1,0 +1,47 @@
+{% extends "blog/base.html" %}
+{% load urlify %}
+{% load crispy_forms_tags %}
+
+{% block back_link %}
+    <li><a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object.name }}</a> </li>
+{% endblock %}
+
+{% block content %}
+    <div class="col-sm-12">
+        <h3>{{ comment.text }}</h3>
+        <footer>{{ comment.user }} on {{ comment.timestamp }}
+            {% if comment.children.count > 0 %}
+                | Відповідей: {{ comment.children.count }}
+            {% endif %}
+            {% if request.user == comment.user %}
+                | <a href="{{ comment.get_delete_url }}">Видалити</a>
+            {% endif %}
+        </footer>
+        <hr/>
+
+        <div>
+            {% for child_comment in comment.children %}
+                <blockquote>
+                    <p>{{ child_comment.text }}</p>
+                    <footer>{{ child_comment.user }} on {{ child_comment.timestamp }}</footer>
+                    {% if request.user == child_comment.user %}
+                        | <a href="{{ child_comment.get_delete_url }}">Видалити</a>
+                    {% endif %}
+                </blockquote>
+            {% endfor %}
+
+            {% if request.user.is_authenticated %}
+                <form method="POST" action=".">
+                    {% csrf_token %}
+                    {{ comment_form|crispy }}
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}"/>
+                    <input type="submit" value="Відповісти" class="btn btn-default"/>
+                </form>
+            {% else %}
+                <p>Для коментування необхідна авторизація.</p>
+            {% endif %}
+
+        </div>
+        <hr/>
+    </div>
+{% endblock content %}

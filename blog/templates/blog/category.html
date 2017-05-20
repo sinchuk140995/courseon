@@ -1,0 +1,40 @@
+{% extends "blog/base_navbar.html" %}
+
+{% block content %}
+    {% if course_list %}
+        {% for course in course_list %}
+            <div class="shadow col-md-5">
+                <img src="{{ course.logotype.url }}" alt="{{ course.name }}" class="sc-item-image img-responsive">
+                <div>
+                    <h3><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h3>
+                    <hr/>
+                    <h4>Дата додавання:
+                        <span class="label label-info">{{ course.pub_date }}</span></h4>
+                    <h4>Автор:
+                        <span class="label label-info">{{ course.author.username }}</span></h4>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="col-md-12">
+            <nav>
+                <ul class="pager">
+                    {% if course_list.has_previous %}
+                        <li class="previous"><a href="?{{ page_request_var }}={{ course_list.previous_page_number }}
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                <span aria-hidden="true">&larr;</span> Попередня</a>
+                        </li>
+                    {% endif %}
+                    {% if course_list.has_next %}
+                        <li class="next"><a href="?{{ page_request_var }}={{ course_list.next_page_number }}
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                            Наступна <span aria-hidden="true">&rarr;</span></a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% else %}
+        <h4 class="text-center">Немає доступних курсів.</h4>
+    {% endif %}
+{% endblock content %}

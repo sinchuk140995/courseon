@@ -1,0 +1,1 @@
+/home/inspiron/miniconda3

@@ -1,0 +1,37 @@
+{% extends "blog/base_navbar.html" %}
+
+{% block content %}
+    {% if course_list %}
+        {% for course in course_list %}
+            <div class="col-md-4">
+                <img src="{{ course.logotype.url }}" alt="{{ course.name }}" class="sc-item-image img-responsive">
+                <div class="text-center">
+                    <h3><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h3>
+                    <p><small>{{ course.pub_date }}</small></p>
+                </div>
+                <p class="content-markdown">{{ course.describe|truncatechars_html:100 }}</p>
+            </div>
+        {% endfor %}
+
+        <div class="col-md-12">
+            <nav>
+                <ul class="pager">
+                    {% if courses.has_previous %}
+                        <li class="previous"><a href="?{{ page_request_var }}={{ courses.previous_page_number }}
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                <span aria-hidden="true">&larr;</span> Попередня</a>
+                        </li>
+                    {% endif %}
+                    {% if courses.has_next %}
+                        <li class="next"><a href="?{{ page_request_var }}={{ courses.next_page_number }}
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                            Наступна <span aria-hidden="true">&rarr;</span></a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% else %}
+        <h4 class="text-center">По Вашому запиту нічого не знайдено.</h4>
+    {% endif %}
+{% endblock content %}

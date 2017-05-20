@@ -1,0 +1,16 @@
+{% extends "blog/base_navbar.html" %}
+
+{% block content %}
+    {% if category_list %}
+        {% for category in category_list %}
+            <div class="col-md-4">
+                <img src="{{ category.logotype.url }}" alt="{{ category.name }}" class="img-responsive">
+                <div class="text-center">
+                    <h3><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></h3>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h4 class="text-center">Категорії відсутні.</h4>
+    {% endif %}
+{% endblock content %}

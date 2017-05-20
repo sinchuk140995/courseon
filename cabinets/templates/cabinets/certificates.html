@@ -1,0 +1,44 @@
+{% extends "blog/base_navbar.html" %}
+
+{% block content %}
+    {% if cabinet_list %}
+        {% for cabinet in cabinet_list %}
+            {% if cabinet.certificate %}
+            <div class="shadow col-md-5">
+                <img src="{{ cabinet.certificate.url }}" alt="{{ cabinet.certificate.name }}" class="sc-item-image img-responsive">
+                <div>
+                    <h3><a href="{{ cabinet.content_object.get_absolute_url }}">{{ cabinet.content_object.name }}</a></h3>
+                    <hr/>
+                    <h4>Дата додавання: <span class="label label-info">{{ cabinet.timestamp }}</h4>
+                    <h4>Статус: </span>
+                        {% if cabinet.is_passed %}
+                            <span class="label label-success">завершено</span>
+                        {% endif %}
+                    </h4>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <div class="col-md-12">
+            <nav>
+                <ul class="pager">
+                    {% if courses.has_previous %}
+                        <li class="previous"><a href="?{{ page_request_var }}={{ courses.previous_page_number }}
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                <span aria-hidden="true">&larr;</span> Попередня</a>
+                        </li>
+                    {% endif %}
+                    {% if courses.has_next %}
+                        <li class="next"><a href="?{{ page_request_var }}={{ courses.next_page_number }}
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                            Наступна <span aria-hidden="true">&rarr;</span></a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% else %}
+        <h4 class="text-center">Немає доступних сертифікатів.</h4>
+    {% endif %}
+{% endblock content %}
