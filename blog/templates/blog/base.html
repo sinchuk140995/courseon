@@ -27,23 +27,22 @@
     {% block head_extra %} {% endblock head_extra %}
 </head>
 <body>
-    <nav class="header navbar navbar-default">
-        <div class="container">
+     <nav class="header navbar navbar-default">
+        <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
-            <!--<div class="navbar-header">-->
-                <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">-->
-                    <!--<span class="sr-only">Toggle navigation</span>-->
-                    <!--<span class="icon-bar"></span>-->
-                    <!--<span class="icon-bar"></span>-->
-                    <!--<span class="icon-bar"></span>-->
-                <!--</button>-->
-                <!--<a class="navbar-brand" href="{% url "blog:index" %}">CourseON</a>-->
-            <!--</div>-->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+              <a class="navbar-brand" href="{% url "blog:index" %}">Головна</a>
+            </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li><a href="{% url "blog:index" %}">Головна <span class="sr-only">(current)</span></a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Додати <span class="caret"></span></a>
                         <ul class="dropdown-menu">
@@ -53,7 +52,7 @@
                         </ul>
                     </li>
                 </ul>
-                <form class="navbar-form navbar-right"  method="get" action="{% url "blog:search" %}">
+                <form class="navbar-form navbar-right" method="get" action="{% url "blog:search" %}">
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Ключові слова" name="q">
                     </div>
@@ -64,9 +63,28 @@
                         <li><a href="{% url "login" %}">Авторизація</a></li>
                         <li><a href="{% url "register" %}">Реєстрація</a></li>
                     {% else %}
-                        <li><a href="{% url "cabinets:index" %}">Кабінет</a></li>
-                        <li><a href="{% url "cabinets:certificates" %}">Сертифікати</a></li>
-                        <li><a href="{% url "logout" %}">Вийти</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ request.user.username }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                {% if request.user.is_superuser or request.user.is_staff %}
+                                    <li><a href="{% url "moderator:statistic" %}">Статистика</a></li>
+                                {% endif %}
+                                <li><a href="{% url "cabinets:index" %}">Кабінет</a></li>
+                                <li><a href="{% url "cabinets:certificates" %}">Сертифікати</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{% url "logout" %}">Вийти</a></li>
+                            </ul>
+                        </li>
+
+                        {% if is_author %}
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Курс <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{% url "blog:course_update" category=course.category.slug slug=course.slug %}">Редагувати</a></li>
+                                    <li><a href="{% url "blog:course_delete" category=course.category.slug slug=course.slug %}">Видалити</a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
                     {% endif %}
                 </ul>
             </div><!-- /.navbar-collapse -->
