@@ -1,0 +1,52 @@
+.wmd-panel {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+.comment-reply {
+     display: none;
+}
+textarea.form-control {
+    height: 25% !important;
+}
+.none_block {
+    display: inline-block;
+}
+
+.img-responsive {
+    width: auto;
+    height: 150px;
+}
+
+.profile {
+    width: auto;
+    height: 250px;
+}
+
+.shadow {
+    box-shadow: 0 0 10px rgba(0,0,0,0.5); /* Параметры тени */
+    margin: 10px;
+}
+
+.header {
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: white;
+    font-size: 150%;
+}
+
+.custom-content {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.custom-content .sc-item-image {
+    margin-bottom: 20px;
+}
+
+#custom-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  background-color: #f5f5f5;
+}
