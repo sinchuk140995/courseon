@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-    <title>{% block head %}Blog{% endblock %}</title>
+    <title>{% block head %} {{ title }} {% endblock %}</title>
 
     <!-- Font awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -155,45 +155,6 @@
             });
             $(".content-markdown img").each(function () {
                 $(this).addClass("img-responsive");
-            });
-            var name_input = $("#id_name");
-
-            function set_name(value) {
-                $("#id_name_preview").text(value);
-            }
-            set_name(name_input.val());
-
-            name_input.keyup(function () {
-                var new_name = $(this).val();
-                set_name(new_name);
-            });
-
-            var url_input = $("#id_course_url");
-
-            function set_url(value) {
-                $("#id_url_preview").text(value);
-            }
-            set_url(url_input.val());
-
-            url_input.keyup(function () {
-                var new_url = $(this).val();
-                set_url(new_url);
-            });
-
-            var describe_input = $("#id_describe");
-
-            function set_content(value) {
-                var marked_content = marked(value);
-                $("#id_desc_preview").html(marked_content);
-                $("#id_desc_preview img").each(function () {
-                    $(this).addClass("img-responsive");
-                });
-            }
-            set_content(describe_input.val());
-
-            describe_input.keyup(function () {
-                var new_describe = $(this).val();
-                set_content(new_describe);
             });
         })
     </script>

@@ -14,6 +14,7 @@ from .forms import CommentForm
 @method_decorator(login_required, name="post")
 class CommentThread(View):
     template_name = "comments/thread.html"
+    title = "Вітка"
 
     def get(self, *args, **kwargs):
         comment = get_object_or_404(Comment, pk=kwargs["id"])
@@ -23,8 +24,9 @@ class CommentThread(View):
         }
         comment_form = CommentForm(initial=initial_data)
         context = {
+            "title": self.title,
             "comment": comment,
-            "comment_form": comment_form
+            "comment_form": comment_form,
         }
         return render(self.request, self.template_name, context)
 
@@ -57,6 +59,7 @@ class CommentThread(View):
 
 class CommentDelete(View):
     template_name = "comments/confirm_delete.html"
+    title = "Видалення коментаря"
 
     def get(self, *args, **kwargs):
         comment_obj = get_object_or_404(Comment, pk=kwargs['id'])
@@ -67,6 +70,7 @@ class CommentDelete(View):
             return response
 
         context = {
+            "title": self.title,
             "comment": comment_obj,
         }
 

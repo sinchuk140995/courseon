@@ -4,7 +4,7 @@
     {% if course_list %}
         {% for course in course_list %}
             <div class="col-md-4">
-                <img src="{{ course.logotype.url }}" alt="{{ course.name }}" class="sc-item-image img-responsive">
+                <img src="{{ course.logotype }}" alt="{{ course.name }}" class="sc-item-image img-responsive">
                 <div class="text-center">
                     <h3><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h3>
                     <p><small>{{ course.pub_date }}</small></p>

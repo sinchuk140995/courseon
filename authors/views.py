@@ -8,11 +8,13 @@ from blog.forms import CourseForm
 
 class ApplicantView(View):
     template_name = "blog/course_form.html"
+    title = "Подача заявки"
 
     def get(self, *args, **kwargs):
         course_form = CourseForm()
         context = {
-            "course_form": course_form
+            "title": self.title,
+            "course_form": course_form,
         }
         return render(self.request, self.template_name, context)
 

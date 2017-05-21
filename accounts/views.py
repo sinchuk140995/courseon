@@ -26,8 +26,8 @@ class Login(IsLoginMixin, View):
     def get(self, *args, **kwargs):
         form = UserLoginForm()
         context = {
+            "title": self.title,
             "form": form,
-            "title": self.title
         }
         return render(self.request, self.template_name, context)
 
@@ -58,7 +58,7 @@ class Register(IsLoginMixin, View):
     def get(self, *args, **kwargs):
         form = UserRegistrationForm()
         context = {
-            "title": self.title,
+            "title": "Реєстрація",
             "form": form
         }
         return render(self.request, self.template_name, context)

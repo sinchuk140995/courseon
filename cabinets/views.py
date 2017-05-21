@@ -13,6 +13,7 @@ from blog.models import Course
 
 class CabinetView(View):
     template_name = "cabinets/cabinet.html"
+    title = "Кабінет"
 
     def get(self, *args, **kwargs):
         category_list = Category.objects.all()
@@ -32,6 +33,7 @@ class CabinetView(View):
             cabinet_list = paginator.page(paginator.num_pages)
 
         context = {
+            "title": self.title,
             "category_list": category_list,
             "cabinet_list": cabinet_list,
             "page_request_var": page_request_var
@@ -59,6 +61,7 @@ class CabinetView(View):
 
 class CourseUnsubscribe(View):
     template_name = "cabinets/confirm_unsubscribe.html"
+    title = "Відписка"
 
     def get(self, *args, **kwargs):
         subscribed_course = get_object_or_404(Course, slug=kwargs["slug"])
@@ -68,6 +71,7 @@ class CourseUnsubscribe(View):
         }
         unsubscribe_form = UnsubscribeForm(initial=initial_data)
         context = {
+            "title": self.title,
             "subscribed_course": subscribed_course,
             "unsubscribe_form": unsubscribe_form
         }
@@ -91,12 +95,14 @@ class CourseUnsubscribe(View):
 
 class CertificateList(View):
     template_name = "cabinets/certificates.html"
+    title = "Сертифікати"
 
     def get(self, *args, **kwargs):
         category_list = Category.objects.all()
         user = self.request.user
         cabinet_list = Cabinet.objects.filter_by_user(user).filter(is_passed=True)
         context = {
+            "title": self.title,
             "category_list": category_list,
             "cabinet_list": cabinet_list,
         }
@@ -106,6 +112,7 @@ class CertificateList(View):
 
 class CertificateManagement(View):
     template_name = "cabinets/certificate_form.html"
+    title = "Вивантаження сертифікату"
 
     def get(self, *args, **kwargs):
         category_list = Category.objects.all()
@@ -118,6 +125,7 @@ class CertificateManagement(View):
         certificate_form = CertificateUpload(initial=initial_data)
 
         context = {
+            "title": self.title,
             "category_list": category_list,
             "course": subscribed_course,
             "certificate_form": certificate_form,

@@ -20,6 +20,7 @@ class SuperuserOrStaffMixin(UserPassesTestMixin):
 
 class ApplicantList(SuperuserOrStaffMixin, View):
     template_name = "moderator/applicants.html"
+    title = "Заявки"
 
     def get(self, *args, **kwargs):
         category_list = Category.objects.all()
@@ -38,6 +39,7 @@ class ApplicantList(SuperuserOrStaffMixin, View):
             applicants = paginator.page(paginator.num_pages)
 
         context = {
+            "title": self.title,
             "category_list": category_list,
             "applicants": applicants,
             "page_request_var": page_request_var
@@ -48,6 +50,7 @@ class ApplicantList(SuperuserOrStaffMixin, View):
 
 class ApplicantView(SuperuserOrStaffMixin, View):
     template_name = "moderator/applicant.html"
+    title = "Заявка"
 
     def get(self, *args, **kwargs):
         category_list = Category.objects.all()
@@ -87,6 +90,7 @@ class DeclineApplicant(SuperuserOrStaffMixin, View):
 
 class StatisticsView(SuperuserOrStaffMixin, View):
     template_name = "moderator/statistics.html"
+    title = "Статистика"
 
     def get(self, *args, **kwargs):
         category_stat = CategoryStatistic.objects.all()
@@ -103,8 +107,8 @@ class StatisticsView(SuperuserOrStaffMixin, View):
             count = CoursePopularity.objects.filter(author=user).aggregate(count=Sum('users_count'))
             author_popular[user.last_name] = count['count']
 
-
         context = {
+            "title": self.title,
             "category_list": category_list,
             "category_stat": category_stat,
             "author_stat": author_stat,
@@ -118,10 +122,6 @@ class StatisticsView(SuperuserOrStaffMixin, View):
         self.count_statistic_generate(User, AuthorStatistic)
         self.count_statistic_generate(Category, CategoryStatistic)
         return redirect(reverse("moderator:statistic"))
-
-
-    # @staticmethod
-    # def avg_mark_generate():
 
 
     @staticmethod
@@ -157,30 +157,4 @@ class StatisticsView(SuperuserOrStaffMixin, View):
                                                                          course_count=course_count)
             if not created:
                 statistic_obj.count = course_count
-
-    # def author_stat_generate(self, model, model_to_save):
-    #     users = User.objects.filter(groups__name__contains="authors")
-    #     content_type = ContentType.objects.get_for_model(User)
-    #
-    #     for user in users:
-    #         obj_id = user.id
-    #         course_count = user.course_set.count()
-    #         statistic_obj, created = AuthorStatistic.objects.get_or_create(content_type=content_type,
-    #                                                                        object_id=obj_id,
-    #                                                                        course_count=course_count)
-    #         if not created:
-    #             statistic_obj.count = course_count
-    #
-    # def category_stat_generate(self):
-    #     categories = Category.objects.all()
-    #     content_type = ContentType.objects.get_for_model(Category)
-    #
-    #     for category in categories:
-    #         obj_id = category.id
-    #         course_count = category.course_set.count()
-    #         statistic_obj, created = CategoryStatistic.objects.get_or_create(content_type=content_type,
-    #                                                                          object_id=obj_id,
-    #                                                                          course_count=course_count)
-    #         if not created:
-    #             statistic_obj.count = course_count
 

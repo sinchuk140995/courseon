@@ -29,21 +29,27 @@ class AuthorOrStaffMixin(UserPassesTestMixin):
 
 
 class IndexView(View):
+    template_name = "blog/index.html"
+    title = "Головна"
+
     def get(self, *args, **kwargs):
         category_list = Category.objects.all()
         context = {
+            "title": self.title,
             "category_list": category_list,
         }
 
-        return render(self.request, 'blog/index.html', context)
+        return render(self.request, self.template_name, context)
 
 
 class CreateCategory(AuthorOrStaffMixin, View):
     template_name = "blog/category_form.html"
+    title = "Додавання категорії"
 
     def get(self, *args, **kwargs):
         category_form = CategoryForm()
         context = {
+            "title": self.title,
             "category_form": category_form,
         }
         return render(self.request, self.template_name, context)
@@ -82,10 +88,11 @@ class CategoryView(View):
             course_list = paginator.page(paginator.num_pages)
 
         context = {
+            "title": category_obj.name,
             "category": category_obj,
             "category_list": category_list,
             "course_list": course_list,
-            "page_request_var": page_request_var
+            "page_request_var": page_request_var,
         }
 
         return render(self.request, 'blog/category.html', context)
@@ -124,6 +131,7 @@ class CourseDetail(View):
         print("Passed:", is_passed)
 
         context = {
+            "title": course_obj.name,
             "category_list": category_list,
             "course": course_obj,
             "comments": comments,
@@ -173,11 +181,13 @@ class CourseDetail(View):
 
 class CourseCreate(AuthorOrStaffMixin, View):
     template_name = "blog/course_form.html"
+    title = "Додавання курсу"
 
     def get(self, *args, **kwargs):
         category_list = Category.objects.all()
         course_form = CourseForm()
         context = {
+            "title": self.title,
             "category_list": category_list,
             "course_form": course_form,
         }
@@ -208,6 +218,7 @@ class CourseCreate(AuthorOrStaffMixin, View):
 
 class CourseUpdate(View):
     template_name = "blog/course_form.html"
+    title = "Редагування курсу"
 
     def get(self, *args, **kwargs):
         category_list = Category.objects.all()
@@ -220,6 +231,7 @@ class CourseUpdate(View):
 
         course_form = CourseForm(instance=course_obj)
         context = {
+            "title": self.title,
             "category_list": category_list,
             "course": course_obj,
             "course_form": course_form,
@@ -259,6 +271,7 @@ class CourseDelete(View):
 
 class Search(View):
     template_name = "blog/search_result.html"
+    title = "Пошук"
 
     def get(self, *args, **kwargs):
         category_list = Category.objects.all()
@@ -273,6 +286,7 @@ class Search(View):
             ).distinct()
 
         context = {
+            "title": self.title,
             "category_list": category_list,
             "course_list": course_list,
         }
