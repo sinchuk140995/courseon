@@ -21,7 +21,7 @@
     <hr/>
     {% if request.user.is_authenticated %}
         {% if not is_subscribed %}
-            <form method="POST" action="{% url "cabinets:index" %}">
+            <form method="POST" action="{% url "cabinets:index" %}" class="none_block">
                 {% csrf_token %}
                 {{ subscribe_form|crispy }}
                     <input type="submit" value="Підписатися" class="btn btn-primary"/>
