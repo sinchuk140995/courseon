@@ -6,16 +6,17 @@
             {% if certificate.url %}
             <div class="shadow col-md-5 text-center">
                 {% if certificate.type == 'pdf' %}
-                    <a href="{{ certificate.url }}"
-                       download="{{ certificate.cabinet.content_object.name }}">
-                    <embed src="{{ certificate.url }}" width="100%" height="100%" />Скачати</a>
+                    <object data="{{ certificate.url }}" type="application/pdf" width="100%" height="100%">
+                        <p>Перейти до <a href="{{ certificate.url }}">сертифікату</a></p>
+                    </object>
                 {% else %}
-                    <a href="{{ certificate.url }}"
-                       download="{{ certificate.cabinet.content_object.name }}">
-                    <img src="{{ certificate.url }}"
+		    <img src="{{ certificate.url }}"
                              alt="{{ certificate.cabinet.content_object.name }}"
-                         class="sc-item-image img-responsive center-block" />Скачати</a>
+                         class="sc-item-image img-responsive center-block" />
                 {% endif %}
+		<a href="{{ certificate.url }}"
+                       download="{{ certificate.cabinet.content_object.name }}">
+                    Скачати</a>
                 <div class="text-center">
                     <h3><a href="{{ certificate.cabinet.content_object.get_absolute_url }}">
                         {{ certificate.cabinet.content_object.name }}</a></h3>
