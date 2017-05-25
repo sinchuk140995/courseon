@@ -8,9 +8,7 @@
                 {% if certificate.type == 'pdf' %}
                     <a href="{{ certificate.url }}"
                        download="{{ certificate.cabinet.content_object.name }}">
-                    <object data="{{ certificate.url }}" type="application/pdf" width="100%" height="100%">
-                        <p>Перейти до <a href="{{ certificate.url }}">сертифікату</a></p>
-                    </object> Скачати</a>
+                    <embed src="{{ certificate.url }}" width="100%" height="100%" />Скачати</a>
                 {% else %}
                     <a href="{{ certificate.url }}"
                        download="{{ certificate.cabinet.content_object.name }}">
