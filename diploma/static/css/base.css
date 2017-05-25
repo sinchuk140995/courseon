@@ -1,6 +1,7 @@
 .wmd-panel {
     margin-right: 0 !important;
     margin-left: 0 !important;
+    border-top: 1px solid grey;
 }
 .comment-reply {
      display: none;
@@ -15,6 +16,10 @@ textarea.form-control {
 .img-responsive {
     width: auto;
     height: 150px;
+}
+
+.text-center .img-responsive {
+    margin: auto !important;
 }
 
 .profile {

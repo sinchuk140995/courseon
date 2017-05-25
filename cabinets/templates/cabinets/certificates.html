@@ -1,22 +1,33 @@
-{% extends "blog/base_navbar.html" %}
+{% extends "blog/base.html" %}
 
 {% block content %}
-    {% if cabinet_list %}
-        {% for cabinet in cabinet_list %}
-            {% if cabinet.certificate %}
-            <div class="shadow col-md-5">
-                <img src="{{ cabinet.certificate }}" alt="{{ cabinet.certificate.name }}" class="sc-item-image img-responsive center-block">
-                <div>
-                    <h3><a href="{{ cabinet.content_object.get_absolute_url }}">{{ cabinet.content_object.name }}</a></h3>
+    {% if certificate_list %}
+        {% for certificate in certificate_list %}
+            {% if certificate.url %}
+            <div class="shadow col-md-5 text-center">
+                {% if certificate.type == 'pdf' %}
+                    <a href="{{ certificate.url }}"
+                       download="{{ certificate.cabinet.content_object.name }}">
+                    <object data="{{ certificate.url }}" type="application/pdf" width="100%" height="100%">
+                        <p>Перейти до <a href="{{ certificate.url }}">сертифікату</a></p>
+                    </object> Скачати</a>
+                {% else %}
+                    <a href="{{ certificate.url }}"
+                       download="{{ certificate.cabinet.content_object.name }}">
+                    <img src="{{ certificate.url }}"
+                             alt="{{ certificate.cabinet.content_object.name }}"
+                         class="sc-item-image img-responsive center-block" />Скачати</a>
+                {% endif %}
+                <div class="text-center">
+                    <h3><a href="{{ certificate.cabinet.content_object.get_absolute_url }}">
+                        {{ certificate.cabinet.content_object.name }}</a></h3>
+                    <h4>Категорія: <span class="label label-info">{{ certificate.cabinet.content_object.category.name }}</span></h4>
                     <hr/>
-                    <h4>Дата додавання: <span class="label label-info">{{ cabinet.timestamp }}</h4>
+                    <h4>Дата додавання: <span class="label label-info">{{ certificate.cabinet.timestamp }}</span></h4>
+                    <h4>Дата закінчення: <span class="label label-success">{{ certificate.timestamp }}</span></h4>
                     <h4>Статус:
-                        {% if cabinet.is_passed %}
+                        {% if certificate.cabinet.is_passed %}
                             <span class="label label-success">завершено</span></h4>
-                            <h4><a download="{{ cabinet.content_object.name }}.jpg"
-                                  href="{{ cabinet.certificate }}" title="{{ cabinet.content_object.name }}">
-                                    Скачати<img style="display: none;" alt="{{ cabinet.content_object.name }}" src="{{ cabinet.certificate }}">
-                            </a></h4>
                         {% endif %}
                 </div>
             </div>
@@ -26,14 +37,14 @@
         <div class="col-md-12">
             <nav>
                 <ul class="pager">
-                    {% if courses.has_previous %}
-                        <li class="previous"><a href="?{{ page_request_var }}={{ courses.previous_page_number }}
+                    {% if certificate_list.has_previous %}
+                        <li class="previous"><a href="?{{ page_request_var }}={{ certificate_list.previous_page_number }}
                             {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
                                 <span aria-hidden="true">&larr;</span> Попередня</a>
                         </li>
                     {% endif %}
-                    {% if courses.has_next %}
-                        <li class="next"><a href="?{{ page_request_var }}={{ courses.next_page_number }}
+                    {% if certificate_list.has_next %}
+                        <li class="next"><a href="?{{ page_request_var }}={{ certificate_list.next_page_number }}
                             {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
                             Наступна <span aria-hidden="true">&rarr;</span></a>
                         </li>

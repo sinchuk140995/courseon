@@ -1,31 +1,24 @@
-from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.contrib import messages
 from django.db.models import Q
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.contenttypes.models import ContentType
 from django.utils.decorators import method_decorator
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
 from django.http import HttpResponse
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+# cloudinary
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
+from .models import Category, Course
+from .forms import CourseForm, CategoryForm
 from comments.forms import CommentForm
 from comments.models import Comment
 from cabinets.forms import SubscribeForm
-from .models import Category, Course
-from .forms import CourseForm, CategoryForm
-
-
-class AuthorOrStaffMixin(UserPassesTestMixin):
-    def test_func(self):
-        author_group = Group.objects.get(name="authors")
-        if self.request.user.is_staff or self.request.user.is_superuser:
-            return True
-        elif author_group in self.request.user.groups.all():
-            return True
-        else:
-            return False
 
 
 class IndexView(View):
@@ -42,29 +35,39 @@ class IndexView(View):
         return render(self.request, self.template_name, context)
 
 
-class CreateCategory(AuthorOrStaffMixin, View):
-    template_name = "blog/category_form.html"
+class CreateCategory(View):
+    template_name = "blog/add_content_form.html"
     title = "Додавання категорії"
 
     def get(self, *args, **kwargs):
         category_form = CategoryForm()
         context = {
-            "title": self.title,
-            "category_form": category_form,
+            'create_form': category_form,
+            'title': self.title,
         }
         return render(self.request, self.template_name, context)
 
     def post(self, *args, **kwargs):
-        category_form = CategoryForm(self.request.POST, self.request.FILES)
+        category_form = CategoryForm(self.request.POST)
 
         if category_form.is_valid():
-            category_obj = category_form.save()
+            category_form_obj = category_form.save(commit=False)
+
+            try:
+                logotype = self.request.FILES["logotype"]
+                logo_url = cloudinary.uploader.upload(logotype)['url']
+            except KeyError:
+                logo_url = "http://res.cloudinary.com/dzmnskqms/image/upload/v1495641140/unknown_j8ydbn.png"
+
+            category_form_obj.logo_url = logo_url
+
+            category_form.save()
             messages.success(self.request, "Категорію додано.")
             return redirect("blog:index")
         else:
-            messages.error(self.request, "Невірні дані.")
+            messages.warning(self.request, "Невірні дані.")
             context = {
-                "category_form": category_form
+                "create_form": category_form
             }
             return render(self.request, self.template_name, context)
 
@@ -73,7 +76,7 @@ class CategoryView(View):
     def get(self, *args, **kwargs):
         category_list = Category.objects.all()
         category_obj = get_object_or_404(Category, slug=kwargs["slug"])
-        course_list = Course.objects.filter(category=category_obj) # check_status=True
+        course_list = Course.objects.filter(category=category_obj)
 
         paginator = Paginator(course_list, 10)  # Show 10 contacts per page
         page_request_var = "page"
@@ -128,8 +131,6 @@ class CourseDetail(View):
             if self.request.user == course_obj.author:
                 is_author = True
 
-        print("Passed:", is_passed)
-
         context = {
             "title": course_obj.name,
             "category_list": category_list,
@@ -146,7 +147,7 @@ class CourseDetail(View):
 
     def post(self, *args, **kwargs):
         course_obj = get_object_or_404(Course, slug=kwargs["slug"])
-        comment_form = CommentForm(self.request.POST)
+        comment_form = CommentForm(self.request.POST, self.request.FILES)
         if comment_form.is_valid():
             c_type = comment_form.cleaned_data.get("content_type")
             content_type = ContentType.objects.get(model=c_type)
@@ -179,17 +180,15 @@ class CourseDetail(View):
         return redirect(course_obj.get_absolute_url())
 
 
-class CourseCreate(AuthorOrStaffMixin, View):
-    template_name = "blog/course_form.html"
+class CourseCreate(View):
+    template_name = "blog/add_content_form.html"
     title = "Додавання курсу"
 
     def get(self, *args, **kwargs):
-        category_list = Category.objects.all()
         course_form = CourseForm()
         context = {
             "title": self.title,
-            "category_list": category_list,
-            "course_form": course_form,
+            "create_form": course_form,
         }
         return render(self.request, self.template_name, context)
 
@@ -198,6 +197,15 @@ class CourseCreate(AuthorOrStaffMixin, View):
 
         if course_form.is_valid():
             course_obj = course_form.save(commit=False)
+
+            try:
+                logotype = self.request.FILES["logotype"]
+                logo_url = cloudinary.uploader.upload(logotype)['url']
+            except KeyError:
+                logo_url = "http://res.cloudinary.com/dzmnskqms/image/upload/v1495641140/unknown_j8ydbn.png"
+
+            course_obj.logo_url = logo_url
+
             course_obj.author = self.request.user
 
             if self.request.user.is_staff or self.request.user.is_superuser:
@@ -209,19 +217,18 @@ class CourseCreate(AuthorOrStaffMixin, View):
             messages.success(self.request, "Курс додано.")
             return redirect(course_obj.get_absolute_url())
         else:
-            messages.error(self.request, "Невірні дані.")
+            messages.warning(self.request, "Невірні дані.")
             context = {
-                "course_form": course_form
+                "create_form": course_form
             }
             return render(self.request, self.template_name, context)
 
 
 class CourseUpdate(View):
-    template_name = "blog/course_form.html"
+    template_name = "blog/add_content_form.html"
     title = "Редагування курсу"
 
     def get(self, *args, **kwargs):
-        category_list = Category.objects.all()
         course_obj = get_object_or_404(Course, slug=kwargs["slug"])
 
         if course_obj.author != self.request.user:
@@ -232,24 +239,33 @@ class CourseUpdate(View):
         course_form = CourseForm(instance=course_obj)
         context = {
             "title": self.title,
-            "category_list": category_list,
             "course": course_obj,
-            "course_form": course_form,
+            "create_form": course_form,
         }
         return render(self.request, self.template_name, context)
 
     def post(self, *args, **kwargs):
         course_obj = get_object_or_404(Course, slug=kwargs["slug"])
-        course_form = CourseForm(self.request.POST, self.request.FILES, instance=course_obj)
+
+        course_form = CourseForm(self.request.POST, instance=course_obj)
         if course_form.is_valid():
+            course_obj = course_form.save(commit=False)
+
+            try:
+                logotype = self.request.FILES["logotype"]
+                logo_url = cloudinary.uploader.upload(logotype)['url']
+                course_obj.logo_url = logo_url
+            except KeyError:
+                pass
+
             course_obj.save()
             messages.success(self.request, "Зміни збережено.")
             return redirect(course_obj.get_absolute_url())
         else:
-            messages.error(self.request, "Невірні дані.")
+            messages.warning(self.request, "Невірні дані.")
             context = {
                 "course": course_obj,
-                "course_form": course_form,
+                "create_form": course_form,
             }
             return render(self.request, self.template_name, context)
 
@@ -293,3 +309,30 @@ class Search(View):
 
         return render(self.request, self.template_name, context)
 
+
+def bad_request(request):
+    response = render_to_response('400.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 400
+    return response
+
+
+def permission_denied(request):
+    response = render_to_response('403.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 403
+    return response
+
+
+def page_not_found(request):
+    response = render_to_response('404.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 404
+    return response
+
+
+def server_error(request):
+    response = render_to_response('500.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 500
+    return response

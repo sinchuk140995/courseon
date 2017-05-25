@@ -4,51 +4,44 @@ from pagedown.widgets import PagedownWidget
 from .models import Course, Category
 
 
-class CourseForm(forms.ModelForm):
-    describe = forms.CharField(widget=PagedownWidget(show_preview=False))
-    slug = forms.SlugField(label="Транслітерація",
-                           required=False,
-                           help_text="Якщо назва кирилицею. "
-                                     "Всі літери повинні бути малі. "
-                                     "Замість пробілів має бути знак тире.")
-
-    class Meta:
-        model = Course
-
-        fields = [
-            "name",
-            "slug",
-            "course_url",
-            "category",
-            "logotype",
-            "describe",
-        ]
-        labels = {
-            "name": "Назва",
-            "slug": "Транслітерація",
-            "course_url": "URL",
-            "category": "Категорія",
-            "logotype": "Посилання на логотип",
-            "describe": "Опис",
-        }
-
-
 class CategoryForm(forms.ModelForm):
-    slug = forms.SlugField(label="Транслітерація",
-                           required=False,
-                           help_text="Якщо назва кирилицею. "
-                                     "Всі літери повинні бути малі. "
-                                     "Замість пробілів має бути знак тире.")
 
     class Meta:
         model = Category
 
         fields = [
             "name",
-            "slug",
-            "logotype",
         ]
         labels = {
             "name": "Назва",
-            "logotype": "Посилання на логотип",
         }
+
+
+class CourseForm(forms.ModelForm):
+
+    class Meta:
+        model = Course
+
+        fields = [
+            "name",
+            "category",
+            "course_url",
+            "describe",
+            "platform_name",
+            "platform_url",
+        ]
+        labels = {
+            "name": "Назва",
+            "category": "Категорія",
+            "course_url": "URL адреса",
+        }
+
+    describe = forms.CharField(label="Опис", widget=PagedownWidget(show_preview=False))
+    platform_name = forms.CharField(label="Назва платформи курсу",
+                                    help_text="Наприклад: Прометеус, Курсера",
+                                    required=False,
+                                    )
+    platform_url = forms.URLField(label="Посилання на платформу курсу",
+                                  help_text="Наприклад: https://prometheus.org.ua/",
+                                  required=False,
+                                  )

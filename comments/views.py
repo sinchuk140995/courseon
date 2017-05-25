@@ -32,7 +32,7 @@ class CommentThread(View):
 
     def post(self, *args, **kwargs):
         comment_form = CommentForm(self.request.POST)
-        if comment_form.is_valid() and self.request.user.is_authenticated():
+        if comment_form.is_valid():
             c_type = comment_form.cleaned_data.get("content_type")
             content_type = ContentType.objects.get(model=c_type)
             obj_id = comment_form.cleaned_data.get("object_id")
@@ -52,9 +52,10 @@ class CommentThread(View):
                                     text=text,
                                     parent=parent_obj
                                 )
-            return redirect(parent_obj.get_absolute_url())
-        else:
-            return redirect(reverse("blog:index"))
+            if created:
+                return redirect(parent_obj.get_absolute_url())
+
+        return redirect(reverse("blog:index"))
 
 
 class CommentDelete(View):
@@ -65,7 +66,7 @@ class CommentDelete(View):
         comment_obj = get_object_or_404(Comment, pk=kwargs['id'])
 
         if comment_obj.user != self.request.user:
-            response = HttpResponse("Недостатньо прав.")
+            response = HttpResponse()
             response.status_code = 403
             return response
 
@@ -80,8 +81,9 @@ class CommentDelete(View):
         comment = get_object_or_404(Comment, pk=kwargs['id'])
 
         if comment.user != self.request.user:
-            messages.error(self.request, "Видалення не доступне.")
-            raise Http404
+            response = HttpResponse()
+            response.status_code = 403
+            return response
 
         if comment.content_object is None:
             parent_obj_url = comment.parent.content_object.get_absolute_url()

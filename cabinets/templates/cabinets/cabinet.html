@@ -1,13 +1,18 @@
-{% extends "blog/base_navbar.html" %}
+{% extends "blog/base.html" %}
 
 {% block content %}
     {% if cabinet_list %}
         {% for cabinet in cabinet_list %}
             <div class="shadow col-md-5">
-                <img src="{{ cabinet.content_object.logotype }}" alt="{{ cabinet.content_object.name }}" class="sc-item-image img-responsive">
-                <div>
+                <img src="{{ cabinet.content_object.logo_url }}"
+                     alt="{{ cabinet.content_object.name }}"
+                     class="sc-item-image img-responsive center-block">
+                <div class="text-center">
                     <h3><a href="{{ cabinet.content_object.get_absolute_url }}">{{ cabinet.content_object.name }}</a></h3>
                     <hr/>
+                    <h4>Категорія: <span class="label label-info">
+                        {{ cabinet.content_object.category.name }}</span>
+                    </h4>
                     <h4>Дата додавання: <span class="label label-info">
                         {{ cabinet.timestamp }}</span>
                     </h4>

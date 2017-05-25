@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import dj_database_url
 from decouple import config
+import cloudinary
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,15 +44,22 @@ INSTALLED_APPS = [
     # third party stuff
     'pagedown',
     'crispy_forms',
+    'cloudinary',
 
     # local app
     'accounts',
-    'authors',
     'cabinets',
     'comments',
     'moderator',
     'blog',
 ]
+
+# Cloudinary
+cloudinary.config(
+  cloud_name=config('cloud_name'),
+  api_key=config('api_key'),
+  api_secret=config('api_secret'),
+)
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 

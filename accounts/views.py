@@ -72,10 +72,6 @@ class Register(IsLoginMixin, View):
             user.set_password(password)
             user.save()
 
-            # author status
-            author_group = Group.objects.get(name="authors")
-            user.groups.add(author_group)
-
             new_user = authenticate(username=user.username, password=password)
             login(self.request, new_user)
             if next:

@@ -29,32 +29,42 @@ class UserLoginForm(forms.Form):
 
 
 class UserRegistrationForm(forms.ModelForm):
-    email = forms.EmailField(label="Електронна адреса")
-    username = forms.CharField(label="Логін",
-                               help_text="Довжина 150 символів або менше."
-                                         "Дозволено букви, цифри і символи @/./+/-/_ тільки.")
-    first_name = forms.CharField(label="Ім'я")
-    last_name = forms.CharField(label="Прізвище")
-    password = forms.CharField(widget=forms.PasswordInput, label="Пароль")
-    password_rpt = forms.CharField(widget=forms.PasswordInput, label="Повторіть пароль")
 
     class Meta:
         model = User
+
         fields = [
             'email',
             'username',
             'first_name',
             'last_name',
             'password',
-            'password_rpt'
         ]
+
+    email = forms.EmailField(label="Електронна пошта", required=True)
+    username = forms.CharField(label="Логін",
+                               help_text="Не більше 150 символів. "
+                                         "Дозволено букви, цифри і символи @/./+/-/_.")
+    first_name = forms.CharField(label="Ім'я", required=True)
+    last_name = forms.CharField(label="Прізвище", required=True)
+    password = forms.CharField(widget=forms.PasswordInput, label="Пароль")
+    password_rpt = forms.CharField(widget=forms.PasswordInput, label="Повторіть пароль")
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+
+        try:
+            User.objects.get(username=username)
+            raise forms.ValidationError("Користувач з таким логіном вже зареєстрований.")
+        except User.DoesNotExist:
+            return username
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
 
         try:
             User.objects.get(email=email)
-            raise forms.ValidationError("This email has already been registered.")
+            raise forms.ValidationError("Користувач з такою електронною поштою вже зареєстрований.")
         except User.DoesNotExist:
             return email
 
@@ -63,6 +73,6 @@ class UserRegistrationForm(forms.ModelForm):
         password_rpt = self.cleaned_data.get("password_rpt")
 
         if not password == password_rpt:
-            raise forms.ValidationError("Passwords must match.")
+            raise forms.ValidationError("Паролі повинні співпадати.")
 
         return password

@@ -3,14 +3,9 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from django.core.validators import MaxValueValidator
 
 
 class CommentManager(models.Manager):
-    # def all_parents(self):
-    #     qs = super(CommentManager, self).filter(parent=None)
-    #     return qs
-
     def filter_by_instance(self, instance):
         content_type = ContentType.objects.get_for_model(instance.__class__)
         obj_id = instance.id
@@ -23,10 +18,9 @@ class Comment(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
-    parent = models.ForeignKey("self", null=True, blank=True)
-    text = models.TextField("comments text")
-    # grade = models.PositiveIntegerField(validators=[MaxValueValidator(5),])
-    timestamp = models.DateTimeField("comments date", auto_now_add=True)
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
+    text = models.TextField()
+    timestamp = models.DateTimeField("date", auto_now_add=True)
 
     objects = CommentManager()
 

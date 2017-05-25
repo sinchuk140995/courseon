@@ -1,4 +1,4 @@
-{% extends "blog/base_navbar.html" %}
+{% extends "blog/base.html" %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -7,7 +7,12 @@
         <hr/>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ certificate_form|crispy }}
+            <label for="id_certificate" class="control-label  requiredField">
+                Сертифікат </label>
+            <div class="controls">
+                <input type="file" name="certificate" id="id_certificate" required />
+            </div>
+            <br/>
             <input type="submit" class="btn btn-default" value="Відправити" />
         </form>
     </div>

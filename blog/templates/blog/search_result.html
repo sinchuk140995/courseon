@@ -1,16 +1,20 @@
-{% extends "blog/base_navbar.html" %}
+{% extends "blog/base.html" %}
 
 {% block content %}
     {% if course_list %}
         {% for course in course_list %}
-            <div class="col-md-4">
-                <img src="{{ course.logotype }}" alt="{{ course.name }}" class="sc-item-image img-responsive">
+            <div class="shadow col-md-5">
+                <img src="{{ course.logo_url }}"
+                     alt="{{ course.name }}"
+                     class="sc-item-image img-responsive center-block" />
                 <div class="text-center">
                     <h3><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h3>
-                    <p><small>{{ course.pub_date }}</small></p>
+                    <h4>Дата додавання:
+                        <span class="label label-info">{{ course.pub_date }}</span></h4>
+                    <h4>Автор:
+                        <span class="label label-info">{{ course.author.get_full_name }}</span></h4>
                 </div>
                 <p class="content-markdown">{{ course.describe|truncatechars_html:100 }}</p>
-            </div>
         {% endfor %}
 
         <div class="col-md-12">

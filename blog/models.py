@@ -1,18 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, pre_delete
 from django.utils.text import slugify
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Max
 
 from comments.models import Comment
 from cabinets.models import Cabinet
+from .utils import transliterate
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=120, unique=True)
+    logo_url = models.ImageField()
     slug = models.SlugField(unique=True)
-    logotype = models.URLField()
 
     def __str__(self):
         return self.name
@@ -22,14 +24,16 @@ class Category(models.Model):
 
 
 class Course(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=120, unique=True)
     author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     slug = models.SlugField(unique=True)
-    course_url = models.URLField("url", max_length=100)
+    course_url = models.URLField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    logotype = models.URLField()
+    logo_url = models.URLField()
     describe = models.TextField()
     pub_date = models.DateField("date published", auto_now_add=True, auto_now=False)
+    platform_name = models.CharField(max_length=120, null=True)
+    platform_url = models.URLField(null=True)
     check_status = models.NullBooleanField(default=None)
 
     def __str__(self):
@@ -69,20 +73,44 @@ class Course(models.Model):
 
 
 def create_slug(sender, instance, new_slug=None):
-    slug = slugify(instance.name)
     if new_slug is not None:
         slug = new_slug
-    qs = sender.objects.filter(slug=slug).order_by("-id")
-    exists = qs.exists()
-    if exists:
-        new_slug = "%s-%s" % (slug, qs.first().id)
+    else:
+        slug = slugify(instance.name)
+    try:
+        obj = sender.objects.get(slug=slug)
+        new_slug = "%s-%s" % (slug, obj.id)
         return create_slug(sender, instance, new_slug=new_slug)
-    return slug
+    except sender.DoesNotExist:
+        if slug is None or slug == "":
+            slug = int(sender.objects.all().aggregate(Max(id))) + 1
+        return slug
 
 
 def pre_save_instance_receiver(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = create_slug(sender, instance)
+    if instance.slug is None or instance.slug == "":
+        name = instance.name.lower()
+        translit_name = transliterate(name)
+        if not translit_name:
+            translit_name = name
+        new_slug = slugify(translit_name)
+        instance.slug = create_slug(sender, instance, new_slug=new_slug)
 
 pre_save.connect(pre_save_instance_receiver, sender=Category)
 pre_save.connect(pre_save_instance_receiver, sender=Course)
+
+
+def target_cleanup(target, instance, *args, **kwargs):
+    qs = target.objects.filter(object_id=instance.id,
+                               content_type=instance.get_content_type
+                               )
+    if qs:
+        qs.delete()
+
+
+def course_relate_clean(sender, instance, *args, **kwargs):
+    target_cleanup(Cabinet, instance)
+    target_cleanup(Comment, instance)
+
+pre_delete.connect(course_relate_clean, sender=Course)
+pre_delete.connect(course_relate_clean, sender=Course)

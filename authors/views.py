@@ -7,14 +7,14 @@ from blog.forms import CourseForm
 
 
 class ApplicantView(View):
-    template_name = "blog/course_form.html"
+    template_name = "blog/add_content_form.html"
     title = "Подача заявки"
 
     def get(self, *args, **kwargs):
         course_form = CourseForm()
         context = {
             "title": self.title,
-            "course_form": course_form,
+            "create_form": course_form,
         }
         return render(self.request, self.template_name, context)
 
@@ -33,6 +33,6 @@ class ApplicantView(View):
             messages.error(self.request, "Невірні дані.")
 
         context = {
-            "course_form": course_form
+            "create_form": course_form
         }
         return render(self.request, self.template_name, context)

@@ -1,0 +1,28 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_extra %}
+    {{ create_form.media }}
+{% endblock head_extra %}
+
+{% block content %}
+    <div class="col-sm-6 col-sm-offset-3">
+        <h3>{{ title }}</h3>
+        <hr/>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <label for="id_logotype" class="control-label">
+                Логотип </label>
+            <div class="controls">
+                <input type="file" name="logotype" id="id_logotype" />
+            </div>
+            <br/>
+
+            {{ create_form|crispy }}
+            <input type="submit" class="btn btn-default" value="Відправити" />
+        </form>
+    </div>
+{% endblock content %}
+
+

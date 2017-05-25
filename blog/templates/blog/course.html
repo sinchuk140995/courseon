@@ -1,17 +1,20 @@
-{% extends "blog/base_navbar.html" %}
+{% extends "blog/base.html" %}
 {% load urlify %}
 {% load crispy_forms_tags %}
 
 {% block content %}
+    <div class="text-center">
     <h1>{{ course.name }}</h1>
-    <img class="img-responsive" src="{{ course.logotype }}" alt="{{ course.name }}" class="img-responsive profile"/><br/>
+    <img class="img-responsive" src="{{ course.logo_url }}"
+         alt="{{ course.name }}"
+         class="img-responsive profile"/>
     <hr/>
-    <h4>URL-адреса: <span>
+    <h4>Посилання: <span>
         <a href="{{ course.course_url }}">{{ course.course_url }}</a></span>
     </h4>
     <hr/>
     <h4>Категорія:<span class="label label-info">{{ course.category }}</span> </h4>
-    <h4>Дата додавання:<span class="label label-info">{{ course.pub_date }}</span> </h4>
+    <h4>Дата публікації:<span class="label label-info">{{ course.pub_date }}</span> </h4>
     {% if course.author.get_full_name %}
         <h4>Автор:<span class="label label-info">{{ course.author.get_full_name }}</span> </h4>
     {% endif %}
@@ -25,16 +28,29 @@
             </form>
         {% else %}
             {% if not is_passed %}
+                <h4>
+                    <span class="label label-info">Для завершення проходження курсу необхідно вивантажити сертифікат.</span>
+                </h4>
                 <a href="{% url "cabinets:certificate_upload" course.slug %}" class="btn btn-info">Сертифікат</a>
                 <a href="{% url "cabinets:course_unsubscribe" course.slug %}" class="btn btn-warning">
                     <span class="glyphicon glyphicon-trash"> Відписатися</span></a>
             {% else %}
+                <h4>
+                    <span class="label label-success">Ви завершили проходження даного курсу.</span>
+                </h4>
                 <a href="{% url "cabinets:certificates" %}" class="btn btn-info">Сертифікати</a>
             {% endif %}
         {% endif %}
+        {% if course.platform_name and course.platform_url %}
+                <a href="{{ course.platform_url }}" class="btn btn-info" target="_blank">
+                    {{ course.platform_name }}</a>
+        {% endif %}
     {% else %}
-            <h4>Для додавання в кабінет необхідна авторизація.</h4>
+            <h4>
+                <span class="label label-warning">Для додавання в кабінет необхідна авторизація.</span>
+            </h4>
     {% endif %}
+        </div>
     <hr/>
     <div class="row">
         <div class="col-sm-12">
@@ -51,7 +67,9 @@
             <input type="submit" value="Відправити" class="btn btn-primary"/>
         </form>
         {% else %}
-            <h4>Для коментування необхідна авторизація.</h4>
+            <h4>
+                <span class="label label-warning">Для коментування необхідна авторизація.</span>
+            </h4>
         {% endif %}
         <hr/>
         {% for comment in comments %}

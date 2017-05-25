@@ -1,4 +1,4 @@
-{% extends "blog/base_navbar.html" %}
+{% extends "blog/base.html" %}
 {% load urlify %}
 {% load crispy_forms_tags %}
 
@@ -7,85 +7,87 @@
 {% endblock %}
 
 {% block content %}
-    <form method="POST" action="{% url "moderator:statistic" %}">
-            {% csrf_token %}
-            <input type="submit" value="Показати статистику" class="btn btn-primary"/>
-    </form>
-    <hr/>
-    <div class="container">
-        <h2>Статистика категорій</h2>
-        <table class="table-bordered">
-            <thead>
-                <tr>
-                    <th>Категорія</th>
-                    <th>Кількість курсів</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row_static in category_stat %}
+    <div class="col-sm-6 col-sm-offset-3">
+        <form method="POST" action="{% url "moderator:statistic" %}">
+                {% csrf_token %}
+                <input type="submit" value="Показати статистику" class="btn btn-primary"/>
+        </form>
+        <hr/>
+        <div class="container">
+            <h2>Статистика категорій</h2>
+            <table class="table-bordered">
+                <thead>
                     <tr>
-                        <td>{{ row_static.content_object.name }}</td>
-                        <td>{{ row_static.course_count  }}</td>
+                        <th>Категорія</th>
+                        <th>Кількість курсів</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="container">
-        <h2>Статистика авторів</h2>
-        <table class="table-bordered">
-            <thead>
-                <tr>
-                    <th>Автор</th>
-                    <th>Кількість курсів</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row_static in author_stat %}
+                </thead>
+                <tbody>
+                    {% for row_static in category_stat %}
+                        <tr>
+                            <td>{{ row_static.content_object.name }}</td>
+                            <td>{{ row_static.course_count  }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <h2>Статистика авторів</h2>
+            <table class="table-bordered">
+                <thead>
                     <tr>
-                        <td>{{ row_static.content_object.username }}</td>
-                        <td>{{ row_static.course_count  }}</td>
+                        <th>Автор</th>
+                        <th>Кількість курсів</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="container">
-        <h2>Статистика курсів</h2>
-        <table class="table-bordered">
-            <thead>
-                <tr>
-                    <th>Курс</th>
-                    <th>Кількість користувачів</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row_static in course_popular %}
+                </thead>
+                <tbody>
+                    {% for row_static in author_stat %}
+                        <tr>
+                            <td>{{ row_static.content_object.username }}</td>
+                            <td>{{ row_static.course_count  }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <h2>Статистика курсів</h2>
+            <table class="table-bordered">
+                <thead>
                     <tr>
-                        <td>{{ row_static.content_object.name }}</td>
-                        <td>{{ row_static.users_count  }}</td>
+                        <th>Курс</th>
+                        <th>Кількість користувачів</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="container">
-        <h2>Статистика авторів</h2>
-        <table class="table-bordered">
-            <thead>
-                <tr>
-                    <th>Автор</th>
-                    <th>Кількість користувачів</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for author, count in author_popular.items %}
+                </thead>
+                <tbody>
+                    {% for row_static in course_popular %}
+                        <tr>
+                            <td>{{ row_static.content_object.name }}</td>
+                            <td>{{ row_static.users_count  }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <h2>Статистика авторів</h2>
+            <table class="table-bordered">
+                <thead>
                     <tr>
-                        <td>{{ author }}</td>
-                        <td>{{ count }}</td>
+                        <th>Автор</th>
+                        <th>Кількість користувачів</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for author, count in author_popular.items %}
+                        <tr>
+                            <td>{{ author }}</td>
+                            <td>{{ count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock content %}

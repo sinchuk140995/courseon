@@ -12,7 +12,3 @@ class SubscribeForm(CabinetForm):
 
 class UnsubscribeForm(CabinetForm):
     pass
-
-
-class CertificateUpload(CabinetForm):
-    certificate = forms.URLField()
