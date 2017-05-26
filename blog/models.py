@@ -14,6 +14,7 @@ from .utils import transliterate
 class Category(models.Model):
     name = models.CharField(max_length=120, unique=True)
     logo_url = models.URLField(default="http://res.cloudinary.com/dzmnskqms/image/upload/v1495731762/unknown_swxwii.png")
+    public_id = models.CharField(max_length=50, null=True)
     slug = models.SlugField(unique=True)
 
     def __str__(self):
@@ -30,6 +31,7 @@ class Course(models.Model):
     course_url = models.URLField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     logo_url = models.URLField(default="http://res.cloudinary.com/dzmnskqms/image/upload/v1495731762/unknown_swxwii.png")
+    public_id = models.CharField(max_length=50, null=True)
     describe = models.TextField()
     pub_date = models.DateField("date published", auto_now_add=True, auto_now=False)
     platform_name = models.CharField(max_length=120, null=True)

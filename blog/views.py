@@ -55,11 +55,11 @@ class CreateCategory(View):
 
             try:
                 logotype = self.request.FILES["logotype"]
-                logo_url = cloudinary.uploader.upload(logotype)['url']
+                upload_dict = cloudinary.uploader.upload(logotype)
+                category_obj.logo_url = upload_dict['url']
+                category_obj.public_id = upload_dict['public_id']
             except KeyError:
-                logo_url = "http://res.cloudinary.com/dzmnskqms/image/upload/v1495641140/unknown_j8ydbn.png"
-
-            category_obj.logo_url = logo_url
+                category_obj.logo_url = "http://res.cloudinary.com/dzmnskqms/image/upload/v1495641140/unknown_j8ydbn.png"
 
             category_obj.save()
             messages.success(self.request, "Категорію додано.")
@@ -200,11 +200,11 @@ class CourseCreate(View):
 
             try:
                 logotype = self.request.FILES["logotype"]
-                logo_url = cloudinary.uploader.upload(logotype)['url']
+                upload_dict = cloudinary.uploader.upload(logotype)
+                course_obj.logo_url = upload_dict['url']
+                course_obj.public_id = upload_dict['public_id']
             except KeyError:
-                logo_url = "http://res.cloudinary.com/dzmnskqms/image/upload/v1495641140/unknown_j8ydbn.png"
-
-            course_obj.logo_url = logo_url
+                course_obj.logo_url = "http://res.cloudinary.com/dzmnskqms/image/upload/v1495641140/unknown_j8ydbn.png"
 
             course_obj.author = self.request.user
 
@@ -253,8 +253,9 @@ class CourseUpdate(View):
 
             try:
                 logotype = self.request.FILES["logotype"]
-                logo_url = cloudinary.uploader.upload(logotype)['url']
-                course_obj.logo_url = logo_url
+                upload_dict = cloudinary.uploader.upload(logotype)
+                course_obj.logo_url = upload_dict['url']
+                course_obj.public_id = upload_dict['public_id']
             except KeyError:
                 pass
 
@@ -311,28 +312,28 @@ class Search(View):
 
 
 def bad_request(request):
-    response = render_to_response('400.html', {},
+    response = render_to_response('blog/400.html', {},
                                   context_instance=RequestContext(request))
     response.status_code = 400
     return response
 
 
 def permission_denied(request):
-    response = render_to_response('403.html', {},
+    response = render_to_response('blog/403.html', {},
                                   context_instance=RequestContext(request))
     response.status_code = 403
     return response
 
 
 def page_not_found(request):
-    response = render_to_response('404.html', {},
+    response = render_to_response('blog/404.html', {},
                                   context_instance=RequestContext(request))
     response.status_code = 404
     return response
 
 
 def server_error(request):
-    response = render_to_response('500.html', {},
+    response = render_to_response('blog/500.html', {},
                                   context_instance=RequestContext(request))
     response.status_code = 500
     return response
