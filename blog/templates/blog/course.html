@@ -10,7 +10,7 @@
          class="img-responsive profile"/>
     <hr/>
     <h4>Посилання: <span>
-        <a href="{{ course.course_url }}">{{ course.course_url }}</a></span>
+        <a target="_blank" href="{{ course.course_url }}">{{ course.course_url }}</a></span>
     </h4>
     <hr/>
     <h4>Категорія:<span class="label label-info">{{ course.category }}</span> </h4>
@@ -54,7 +54,7 @@
     <hr/>
     <div class="row">
         <div class="col-sm-12">
-            <p class="content-markdown"> {{ course.describe }}</p>
+            <p class="content-markdown describe"> {{ course.describe }}</p>
         </div>
     </div>
     <hr/>

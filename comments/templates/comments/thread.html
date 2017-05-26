@@ -23,10 +23,11 @@
             {% for child_comment in comment.children %}
                 <blockquote>
                     <p>{{ child_comment.text }}</p>
-                    <footer>{{ child_comment.user }} on {{ child_comment.timestamp }}</footer>
+                    <footer>{{ child_comment.user }} on {{ child_comment.timestamp }}
                     {% if request.user == child_comment.user %}
                         | <a href="{{ child_comment.get_delete_url }}">Видалити</a>
                     {% endif %}
+		    </footer>
                 </blockquote>
             {% endfor %}
 

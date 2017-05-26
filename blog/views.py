@@ -310,30 +310,3 @@ class Search(View):
 
         return render(self.request, self.template_name, context)
 
-
-def bad_request(request):
-    response = render_to_response('blog/400.html', {},
-                                  context_instance=RequestContext(request))
-    response.status_code = 400
-    return response
-
-
-def permission_denied(request):
-    response = render_to_response('blog/403.html', {},
-                                  context_instance=RequestContext(request))
-    response.status_code = 403
-    return response
-
-
-def page_not_found(request):
-    response = render_to_response('blog/404.html', {},
-                                  context_instance=RequestContext(request))
-    response.status_code = 404
-    return response
-
-
-def server_error(request):
-    response = render_to_response('blog/500.html', {},
-                                  context_instance=RequestContext(request))
-    response.status_code = 500
-    return response
