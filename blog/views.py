@@ -51,7 +51,7 @@ class CreateCategory(View):
         category_form = CategoryForm(self.request.POST)
 
         if category_form.is_valid():
-            category_form_obj = category_form.save(commit=False)
+            category_obj = category_form.save(commit=False)
 
             try:
                 logotype = self.request.FILES["logotype"]
@@ -59,9 +59,9 @@ class CreateCategory(View):
             except KeyError:
                 logo_url = "http://res.cloudinary.com/dzmnskqms/image/upload/v1495641140/unknown_j8ydbn.png"
 
-            category_form_obj.logo_url = logo_url
+            category_obj.logo_url = logo_url
 
-            category_form.save()
+            category_obj.save()
             messages.success(self.request, "Категорію додано.")
             return redirect("blog:index")
         else:
