@@ -28,4 +28,5 @@ class Certificate(models.Model):
     cabinet = models.ForeignKey(Cabinet, on_delete=models.CASCADE)
     url = models.URLField()
     type = models.CharField(max_length=30)
+    public_id = models.CharField(max_length=50, null=True)
     timestamp = models.DateTimeField("upload_date", auto_now_add=True)

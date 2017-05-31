@@ -7,8 +7,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 # cloudinary
 import cloudinary
 import cloudinary.uploader
@@ -35,7 +33,36 @@ class IndexView(View):
         return render(self.request, self.template_name, context)
 
 
-class CreateCategory(View):
+class CategoryView(View):
+    def get(self, *args, **kwargs):
+        category_list = Category.objects.all()
+        category_obj = get_object_or_404(Category, slug=kwargs["slug"])
+        course_list = Course.objects.filter(category=category_obj)
+
+        paginator = Paginator(course_list, 10)  # Show 10 contacts per page
+        page_request_var = "page"
+        page = self.request.GET.get(page_request_var)
+        try:
+            course_list = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            course_list = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            course_list = paginator.page(paginator.num_pages)
+
+        context = {
+            "title": category_obj.name,
+            "category": category_obj,
+            "category_list": category_list,
+            "course_list": course_list,
+            "page_request_var": page_request_var,
+        }
+
+        return render(self.request, 'blog/category.html', context)
+
+
+class CategoryCreate(View):
     template_name = "blog/add_content_form.html"
     title = "Додавання категорії"
 
@@ -72,33 +99,45 @@ class CreateCategory(View):
             return render(self.request, self.template_name, context)
 
 
-class CategoryView(View):
+class CategoryUpdate(View):
+    template_name = "blog/add_content_form.html"
+    title = "Редагування категорії"
+
     def get(self, *args, **kwargs):
-        category_list = Category.objects.all()
         category_obj = get_object_or_404(Category, slug=kwargs["slug"])
-        course_list = Course.objects.filter(category=category_obj)
 
-        paginator = Paginator(course_list, 10)  # Show 10 contacts per page
-        page_request_var = "page"
-        page = self.request.GET.get(page_request_var)
-        try:
-            course_list = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            course_list = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            course_list = paginator.page(paginator.num_pages)
-
+        category_form = CategoryForm(instance=category_obj)
         context = {
-            "title": category_obj.name,
+            "title": self.title,
             "category": category_obj,
-            "category_list": category_list,
-            "course_list": course_list,
-            "page_request_var": page_request_var,
+            "create_form": category_form,
         }
+        return render(self.request, self.template_name, context)
 
-        return render(self.request, 'blog/category.html', context)
+    def post(self, *args, **kwargs):
+        category_obj = get_object_or_404(Category, slug=kwargs["slug"])
+
+        category_form = CategoryForm(self.request.POST, instance=category_obj)
+        if category_form.is_valid():
+            category_obj = category_form.save(commit=False)
+
+            try:
+                logotype = self.request.FILES["logotype"]
+                upload_dict = cloudinary.uploader.upload(logotype)
+                category_obj.logo_url = upload_dict['url']
+                category_obj.public_id = upload_dict['public_id']
+            except KeyError:
+                pass
+
+            category_obj.save()
+            messages.success(self.request, "Зміни збережено.")
+            return redirect(category_obj.get_absolute_url())
+        else:
+            messages.warning(self.request, "Невірні дані.")
+            context = {
+                "create_form": category_obj,
+            }
+            return render(self.request, self.template_name, context)
 
 
 @method_decorator(login_required, name='post')
@@ -239,7 +278,7 @@ class CourseUpdate(View):
         course_form = CourseForm(instance=course_obj)
         context = {
             "title": self.title,
-            "course": course_obj,
+            # "course": course_obj,
             "create_form": course_form,
         }
         return render(self.request, self.template_name, context)
@@ -265,7 +304,7 @@ class CourseUpdate(View):
         else:
             messages.warning(self.request, "Невірні дані.")
             context = {
-                "course": course_obj,
+                # "course": course_obj,
                 "create_form": course_form,
             }
             return render(self.request, self.template_name, context)
@@ -309,4 +348,3 @@ class Search(View):
         }
 
         return render(self.request, self.template_name, context)
-

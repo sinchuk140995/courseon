@@ -131,7 +131,7 @@ class CertificateList(View):
         return render(self.request, self.template_name, context)
 
 
-class CertificateManagement(View):
+class CertificateUpload(View):
     template_name = "cabinets/certificate_form.html"
     title = "Вивантаження сертифікату"
 
@@ -140,10 +140,29 @@ class CertificateManagement(View):
 
         course_obj = get_object_or_404(Course, slug=kwargs["slug"])
 
+        user = self.request.user
+        content_type = course_obj.get_content_type
+        obj_id = course_obj.id
+        cabinet = get_object_or_404(Cabinet,
+                                    user=user,
+                                    content_type=content_type,
+                                    object_id=obj_id,
+                                    )
+
+        try:
+            certificate_obj = Certificate.objects.get(
+                                            cabinet=cabinet
+                                            )
+        except Certificate.DoesNotExist:
+            certificate_obj = False
+
+        print(certificate_obj)
+
         context = {
             "title": self.title,
             "category_list": category_list,
             "course": course_obj,
+            "certificate": certificate_obj,
         }
         return render(self.request, self.template_name, context)
 
@@ -151,28 +170,38 @@ class CertificateManagement(View):
         course = get_object_or_404(Course, slug=kwargs["slug"])
         content_type = course.get_content_type
         obj_id = course.id
+        user = self.request.user
         cabinet = get_object_or_404(Cabinet,
                                     content_type=content_type,
                                     object_id=obj_id,
-                                    user=self.request.user,
-                                    is_passed=False,
+                                    user=user,
                                     )
 
         try:
             certificate = self.request.FILES["certificate"]
             upload_data = cloudinary.uploader.upload(certificate)
             certificate_url = upload_data['url']
+            public_id = upload_data['public_id']
             certificate_type = upload_data['format']
-            new_obj, created = Certificate.objects.get_or_create(
-                                        cabinet=cabinet,
-                                        url=certificate_url,
-                                        type=certificate_type,
-                                        )
-            if created:
+
+            try:
+                certificate_obj = Certificate.objects.get(cabinet=cabinet)
+                certificate_obj.url = certificate_url
+                certificate_obj.type = certificate_type
+                certificate_obj.public_id = public_id
+                certificate_obj.save()
+            except Certificate.DoesNotExist:
+                Certificate.objects.create(
+                    cabinet=cabinet,
+                    url=certificate_url,
+                    type=certificate_type,
+                    public_id=public_id,
+                )
                 cabinet.is_passed = True
                 cabinet.save()
-                messages.success(self.request, "Сертифікат вивантажено.")
-                return redirect(reverse("cabinets:certificates"))
+
+            messages.success(self.request, "Сертифікат вивантажено.")
+            return redirect(reverse("cabinets:certificates"))
         except KeyError:
             messages.warning(self.request, "Не вдалося вивантажити сертифікат.")
 

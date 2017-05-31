@@ -10,9 +10,11 @@
             <label for="id_certificate" class="control-label  requiredField">
                 Сертифікат </label>
             <div class="controls">
-                <input type="file" name="certificate" id="id_certificate" required />
+                {% if certificate %}
+                    <span>Поточний:</span> <a href="{{ certificate.url }}">{{ certificate.url|truncatechars:50 }}</a>
+                {% endif %}
+                <input type="file" name="certificate" id="id_certificate" required /><br/>
             </div>
-            <br/>
             <input type="submit" class="btn btn-default" value="Відправити" />
         </form>
     </div>

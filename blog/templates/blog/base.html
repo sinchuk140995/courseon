@@ -76,15 +76,7 @@
                             </ul>
                         </li>
 
-                        {% if is_author %}
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Курс <span class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="{% url "blog:course_update" category=course.category.slug slug=course.slug %}">Редагувати</a></li>
-                                    <li><a href="{% url "blog:course_delete" category=course.category.slug slug=course.slug %}">Видалити</a></li>
-                                </ul>
-                            </li>
-                        {% endif %}
+                        {% block update_menu %}{% endblock update_menu %}
                     {% endif %}
                 </ul>
             </div><!-- /.navbar-collapse -->

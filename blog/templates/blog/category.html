@@ -1,5 +1,14 @@
 {% extends "blog/base.html" %}
 
+{% block update_menu %}
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Категорія <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <li><a href="{% url "blog:category_update" slug=category.slug %}">Редагувати</a></li>
+        </ul>
+    </li>
+{% endblock update_menu %}
+
 {% block content %}
     {% if course_list %}
         {% for course in course_list %}

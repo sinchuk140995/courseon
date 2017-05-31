@@ -2,6 +2,18 @@
 {% load urlify %}
 {% load crispy_forms_tags %}
 
+{% block update_menu %}
+    {% if is_author %}
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Курс <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <li><a href="{% url "blog:course_update" category=course.category.slug slug=course.slug %}">Редагувати</a></li>
+            <li><a href="{% url "blog:course_delete" category=course.category.slug slug=course.slug %}">Видалити</a></li>
+        </ul>
+    </li>
+    {% endif %}
+{% endblock update_menu %}
+
 {% block content %}
     <div class="text-center">
     <h1>{{ course.name }}</h1>
@@ -38,7 +50,7 @@
                 <h4>
                     <span class="label label-success">Ви завершили проходження даного курсу.</span>
                 </h4>
-                <a href="{% url "cabinets:certificates" %}" class="btn btn-info">Сертифікати</a>
+                <a href="{% url "cabinets:certificate_upload" course.slug %}" class="btn btn-info">Сертифікат</a>
             {% endif %}
         {% endif %}
         {% if course.platform_name and course.platform_url %}
@@ -74,7 +86,7 @@
         <hr/>
         {% for comment in comments %}
             <blockquote>
-                <p>{{ comment.text }}</p>
+                <p class="comment">{{ comment.text }}</p>
                 <footer>{{ comment.user }} on {{ comment.timestamp }} |
                     {% if comment.children.count > 0 %}
                         Відповідей: {{ comment.children.count }} |
@@ -85,7 +97,7 @@
 
                 <div class="comment-reply">
                     {% for child_comment in comment.children %}
-                        <blockquote>
+                        <blockquote class="comment">
                             <p>{{ child_comment.text }}</p>
                             <footer>{{ child_comment.user }} on {{ child_comment.timestamp }}</footer>
                         </blockquote>
