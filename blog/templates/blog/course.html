@@ -2,6 +2,7 @@
 {% load urlify %}
 {% load crispy_forms_tags %}
 
+
 {% block update_menu %}
     {% if is_author %}
     <li class="dropdown">
@@ -13,6 +14,37 @@
     </li>
     {% endif %}
 {% endblock update_menu %}
+
+<script>
+    {% block jquery %}
+        function update_text(btn, new_count){
+            btn.text(new_count)
+        }
+
+        $(".like-btn").click(function(e){
+            e.preventDefault()
+            var this_ = $(this)
+            var like_url = this_.attr("data-href")
+            var like_count = $('#like-count');
+
+            if (like_url){
+                $.ajax({
+                    url: like_url,
+                    method: "GET",
+                    data: {},
+                    success: function(data){
+                        console.log(data)
+                        likes_count = data.likes_count
+                        update_text(like_count, likes_count)
+                    }, error: function(error){
+                        console.log(error)
+                        console.log("error")
+                    }
+                })
+            }
+        })
+    {% endblock jquery %}
+</script>
 
 {% block content %}
     <div class="text-center">
@@ -28,10 +60,15 @@
     <h4>Категорія:<span class="label label-info">{{ course.category }}</span> </h4>
     <h4>Дата публікації:<span class="label label-info">{{ course.pub_date }}</span> </h4>
     {% if course.author.get_full_name %}
-        <h4>Автор:<span class="label label-info">{{ course.author.get_full_name }}</span> </h4>
+        <h4>Автор:<a href="{% url "accounts:profile" user=course.author.username %}">
+            {{ course.author.get_full_name }}</a> </h4>
     {% endif %}
     <hr/>
     {% if request.user.is_authenticated %}
+        <h4><a class="like-btn" data-href="{{ course.get_api_like_url }}" data-likes="{{ course.likes.count }}"
+              href="{{ course.get_like_url }}">Мені подобається</a>
+            <span id="like-count" class="label label-info">{{ course.likes.count }}</span>
+        </h4>
         {% if not is_subscribed %}
             <form method="POST" action="{% url "cabinets:index" %}" class="none_block">
                 {% csrf_token %}
@@ -58,6 +95,9 @@
                     {{ course.platform_name }}</a>
         {% endif %}
     {% else %}
+            <h4>Подобається
+            <span class="label label-info">{{ course.likes.count }}</span>
+            </h4>
             <h4>
                 <span class="label label-warning">Для додавання в кабінет необхідна авторизація.</span>
             </h4>
@@ -87,7 +127,9 @@
         {% for comment in comments %}
             <blockquote>
                 <p class="comment">{{ comment.text }}</p>
-                <footer>{{ comment.user }} on {{ comment.timestamp }} |
+                <footer>
+                    <a href="{% url "accounts:profile" user=comment.user.username %}">
+            {{ comment.user.get_full_name }}</a> on {{ comment.timestamp }} |
                     {% if comment.children.count > 0 %}
                         Відповідей: {{ comment.children.count }} |
                     {% endif %}
@@ -99,7 +141,9 @@
                     {% for child_comment in comment.children %}
                         <blockquote class="comment">
                             <p>{{ child_comment.text }}</p>
-                            <footer>{{ child_comment.user }} on {{ child_comment.timestamp }}</footer>
+                            <footer>
+                                <a href="{% url "accounts:profile" user=child_comment.user.username %}">
+            {{ child_comment.user.get_full_name }}</a> on {{ child_comment.timestamp }}</footer>
                         </blockquote>
                     {% endfor %}
                     {% if request.user.is_authenticated %}

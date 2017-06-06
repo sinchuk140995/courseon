@@ -9,7 +9,9 @@
 {% block content %}
     <div class="col-sm-12">
         <h3>{{ comment.text }}</h3>
-        <footer>{{ comment.user }} on {{ comment.timestamp }}
+        <footer>
+            <a href="{% url "accounts:profile" user=comment.user.username %}">
+            {{ comment.user.get_full_name }}</a> on {{ comment.timestamp }}
             {% if comment.children.count > 0 %}
                 | Відповідей: {{ comment.children.count }}
             {% endif %}
@@ -23,7 +25,9 @@
             {% for child_comment in comment.children %}
                 <blockquote>
                     <p>{{ child_comment.text }}</p>
-                    <footer>{{ child_comment.user }} on {{ child_comment.timestamp }}
+                    <footer>
+                        <a href="{% url "accounts:profile" user=child_comment.user.username %}">
+            {{ child_comment.user.get_full_name }}</a> on {{ child_comment.timestamp }}
                     {% if request.user == child_comment.user %}
                         | <a href="{{ child_comment.get_delete_url }}">Видалити</a>
                     {% endif %}

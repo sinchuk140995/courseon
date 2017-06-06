@@ -29,6 +29,7 @@ class Course(models.Model):
     author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     slug = models.SlugField(unique=True)
     course_url = models.URLField()
+    likes = models.ManyToManyField(User, blank=True, related_name="post_likes")
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     logo_url = models.URLField(default="http://res.cloudinary.com/dzmnskqms/image/upload/v1495731762/unknown_swxwii.png")
     public_id = models.CharField(max_length=50, null=True)
@@ -47,6 +48,12 @@ class Course(models.Model):
             "slug": self.slug
         }
         return reverse("blog:course", kwargs=kwargs)
+
+    def get_like_url(self):
+        return reverse("blog:like_toggle", kwargs={"category": self.category.slug, "slug": self.slug})
+
+    def get_api_like_url(self):
+        return reverse("blog:like_api_toggle", kwargs={"category": self.category.slug, "slug": self.slug})
 
     @property
     def comments(self):

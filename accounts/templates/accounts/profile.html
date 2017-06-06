@@ -1,0 +1,30 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+    <div class="text-center">
+        {% if profile %}
+            <h1>{{ title }}</h1>
+            <h4>Користувач: {{ profile.user.get_full_name }}</h4>
+            <hr/>
+            <h4>Соціальні мережі: <span>
+                <a target="_blank" href="{{ profile.social_link }}">{{ profile.social_link }}</a></span>
+            </h4>
+            <hr/>
+            <h4>Навчальний заклад:<span class="label label-info">{{ profile.university }}</span> </h4>
+            <h4>Факультет:<span class="label label-info">{{ profile.faculty }}</span> </h4>
+            <hr/>
+            <div class="row">
+                <div class="col-sm-12">
+                    <p class="content-markdown describe"> {{ profile.describe }}</p>
+                </div>
+            </div>
+            <hr/>
+        {% else %}
+            <h4 class="text-center">Дані профілю відстуні.</h4>
+        {% endif %}
+        {% if personal_profile %}
+            <a href="{% url "accounts:profile_manage" %}" class="btn btn-info">Редагувати</a>
+        {% endif %}
+    </div>
+
+{% endblock content %}

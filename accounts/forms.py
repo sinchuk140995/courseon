@@ -4,6 +4,7 @@ from django.contrib.auth import (
                                 get_user_model,
                             )
 
+from .models import Profile
 
 User = get_user_model()
 
@@ -76,3 +77,26 @@ class UserRegistrationForm(forms.ModelForm):
             raise forms.ValidationError("Паролі повинні співпадати.")
 
         return password
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+
+        fields = [
+            "university",
+            "faculty",
+            "social_link",
+            "describe",
+        ]
+
+        labels = {
+            "university": "Навчальний заклад",
+            "faculty": "Факультет",
+            "social_link": "Посилання на профіль в соціальних мережах",
+        }
+
+    describe = forms.CharField(label="Про себе",
+                               widget=PagedownWidget(show_preview=False),
+                               required=False,
+                               )

@@ -69,6 +69,7 @@
                                 {% if request.user.is_superuser or request.user.is_staff %}
                                     <li><a href="{% url "moderator:statistic" %}">Статистика</a></li>
                                 {% endif %}
+                                <li><a href="{% url "accounts:profile" user=request.user.username %}">Профіль</a></li>
                                 <li><a href="{% url "cabinets:index" %}">Кабінет</a></li>
                                 <li><a href="{% url "cabinets:certificates" %}">Сертифікати</a></li>
                                 <li role="separator" class="divider"></li>
@@ -89,7 +90,7 @@
         <div class="container">
             <div class="row">
                 {% if category_list %}
-                    <div class="col-md-3">
+                        <div class="col-md-3">
                         <ul class="list-group">
                             {% block categories-menu %}
                                 <a href="#" class="list-group-item disabled">
@@ -130,8 +131,9 @@
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js"></script>-->
     <script src="{% static 'marked-master/marked.min.js' %}"></script>
 
-    <script type="text/javascript">
+    <script>
         $(document).ready(function () {
+            {% block jquery %} {% endblock jquery %}
 
             $(".comment-reply-btn").click(function(event) {
                 event.preventDefault();

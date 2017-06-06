@@ -7,6 +7,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.views.generic import RedirectView
+# API
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
 # cloudinary
 import cloudinary
 import cloudinary.uploader
@@ -219,6 +224,41 @@ class CourseDetail(View):
         return redirect(course_obj.get_absolute_url())
 
 
+class CourseLikeToggle(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        course_obj = get_object_or_404(Course, slug=kwargs["slug"])
+        user = self.request.user
+
+        if user in course_obj.likes.all():
+            course_obj.likes.remove(user)
+        else:
+            course_obj.likes.add(user)
+
+        return course_obj.get_absolute_url()
+
+
+class LikeAPIToggle(APIView):
+    authentication_classes = (authentication.SessionAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None, *args, **kwargs):
+        course_obj = get_object_or_404(Course, slug=kwargs["slug"])
+        user = self.request.user
+
+        if user in course_obj.likes.all():
+            liked = False
+            course_obj.likes.remove(user)
+        else:
+            liked = True
+            course_obj.likes.add(user)
+        likes_count = course_obj.likes.count()
+        data = {
+            "liked": liked,
+            "likes_count": likes_count,
+        }
+        return Response(data)
+
+
 class CourseCreate(View):
     template_name = "blog/add_content_form.html"
     title = "Додавання курсу"
@@ -243,10 +283,9 @@ class CourseCreate(View):
                 course_obj.logo_url = upload_dict['url']
                 course_obj.public_id = upload_dict['public_id']
             except KeyError:
-                course_obj.logo_url = "http://res.cloudinary.com/dzmnskqms/image/upload/v1495641140/unknown_j8ydbn.png"
+                pass
 
             course_obj.author = self.request.user
-
             if self.request.user.is_staff or self.request.user.is_superuser:
                 course_obj.check_status = True
             else:

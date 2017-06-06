@@ -25,6 +25,7 @@ urlpatterns = [
     url(r"^login/", Login.as_view(), name="login"),
     url(r"^logout/$", Logout.as_view(), name="logout"),
     url(r"^register/$", Register.as_view(), name="register"),
+    url(r"^account/", include("accounts.urls")),
     url(r"^admin/", admin.site.urls),
     url(r"^author/", include("authors.urls")),
     url(r"^cabinet/", include("cabinets.urls")),
