@@ -41,8 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # third part stuff
-    'rest_framework',
+    # third party stuff
     'pagedown',
     'crispy_forms',
     'cloudinary',
