@@ -30,7 +30,7 @@ urlpatterns = [
     url(r"^author/", include("authors.urls")),
     url(r"^cabinet/", include("cabinets.urls")),
     url(r"^comments/", include("comments.urls")),
-    url(r"^moderator/", include("moderator.urls")),
+
     # password reset
     url(r'^password_reset/$', auth_views.password_reset,
         {
@@ -55,4 +55,3 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-

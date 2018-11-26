@@ -50,15 +50,14 @@ INSTALLED_APPS = [
     'accounts',
     'cabinets',
     'comments',
-    'moderator',
     'blog',
 ]
 
 # Cloudinary
 cloudinary.config(
-  cloud_name=config('cloud_name'),
-  api_key=config('api_key'),
-  api_secret=config('api_secret'),
+    cloud_name=config('cloud_name'),
+    api_key=config('api_key'),
+    api_secret=config('api_secret'),
 )
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
@@ -93,11 +92,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'diploma.wsgi.application'
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
-}
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST': config('DB_HOST'),
+            'PORT': '',
+        }
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('DATABASE_URL')
+        )
+    }
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
@@ -126,11 +137,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'uk'
 
 TIME_ZONE = 'Europe/Kiev'
 
-USE_I18N = True
+USE_I18N = False
 
 USE_L10N = True
 
@@ -149,15 +160,4 @@ STATICFILES_DIRS = (
 )
 
 LOGIN_REDIRECT_URL = '/'
-
 LOGIN_URL = '/login/'
-
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = config('email')
-EMAIL_HOST_PASSWORD = config('email_password')
- 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-SERVER_EMAIL = EMAIL_HOST_USER
-
