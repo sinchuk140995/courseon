@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'cabinets',
     'comments',
     'blog',
+    'warehouse',
 ]
 
 # Cloudinary
