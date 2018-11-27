@@ -22,3 +22,4 @@ urllib3==1.21.1
 whitenoise==3.3.0
 djangorestframework==3.6.3
 ipython==7.1.1
+apyori==1.1.1

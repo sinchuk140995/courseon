@@ -38,6 +38,7 @@ class Course(models.Model):
     platform_name = models.CharField(max_length=120, null=True)
     platform_url = models.URLField(null=True)
     check_status = models.NullBooleanField(default=None)
+    related_courses = models.ManyToManyField('self')
 
     def __str__(self):
         return self.name

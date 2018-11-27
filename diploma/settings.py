@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'comments',
     'blog',
     'warehouse',
+    'mining',
 ]
 
 # Cloudinary
