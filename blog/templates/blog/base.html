@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load blog_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,7 +88,7 @@
         <div class="container">
             <div class="row">
                 {% if category_list %}
-                        <div class="col-md-3">
+                    <div class="col-md-3">
                         <ul class="list-group">
                             {% block categories-menu %}
                                 <a href="#" class="list-group-item disabled">
@@ -101,6 +102,8 @@
                             {% endblock categories-menu %}
                         </ul>
                     </div>
+
+
                     <div class="col-md-9">
                 {% else %}
                     <div class="col-md-12">
@@ -108,6 +111,9 @@
                         {% block content %}{% endblock content %}
                     </div>
             </div>
+            {% if request.user.is_authenticated %}
+                {% recommended_courses request.user %}
+            {% endif %}
         </div>
     </div>
 
