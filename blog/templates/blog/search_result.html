@@ -11,9 +11,13 @@
                     <h3><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h3>
                     <h4>Дата публікації:
                         <span class="label label-info">{{ course.pub_date }}</span></h4>
-                    <h4>Автор:
-                        <a href="{% url "accounts:profile" user=course.author.username %}">
-            {{ course.author.get_full_name }}</a></h4>
+                    {% if course.author %}
+                        <h4>Автор:
+                            <a href="{% url "accounts:profile" user=course.author.username %}">
+                                {{ course.author.get_full_name }}
+                            </a>
+                        </h4>
+                        {% endif %}
                 </div>
             </div>
         {% endfor %}

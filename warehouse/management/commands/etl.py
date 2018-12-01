@@ -64,7 +64,6 @@ class Command(BaseCommand):
         else:
             self.stdout.write("New students cabinets wasn't found")
 
-
     @staticmethod
     def get_or_create_dim_category(category):
         try:
@@ -79,6 +78,8 @@ class Command(BaseCommand):
 
     @staticmethod
     def get_or_create_dim_author(author):
+        if not author:
+            return None
         try:
             dim_author = models.DimAuthor.objects.get(author_id=author.id)
         except models.DimAuthor.DoesNotExist:
